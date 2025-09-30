@@ -1,5 +1,7 @@
-﻿using GameService.DTOs;
+﻿using GameService.Data;
+using GameService.DTOs;
 using GameService.Interfaces;
+using GameService.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameService.Controllers
@@ -8,37 +10,61 @@ namespace GameService.Controllers
     [Route("api/[controller]")]
     public class GamesController : ControllerBase
     {
-        private readonly IGameService _service;
+        private readonly IGameRepositories _repository;
+        private readonly GameDbContext _context;
 
-        public GamesController(IGameService service) => _service = service;
+        public GamesController(IGameRepositories repository, GameDbContext context)
+        {
+            _repository = repository;
+            _context = context;
+        }
 
+        // GET api/games
         [HttpGet]
-        public async Task<IActionResult> GetAll() =>
-            Ok(await _service.GetAllAsync());
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        public async Task<IActionResult> GetAll()
         {
-            var game = await _service.GetByIdAsync(id);
-            return game == null ? NotFound() : Ok(game);
+            var games = await _repository.GetAllAsync();
+            return Ok(games);
         }
 
+        // POST api/games
         [HttpPost]
-        public async Task<IActionResult> Create(GameCreateDto dto)
+        public async Task<IActionResult> Add(Game game)
         {
-            var game = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = game.Id }, game);
+            await _repository.AddAsync(game);
+            return Ok(game);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, GameUpdateDto dto)
+        // POST api/games/{gameId}/buy?userId=123
+        [HttpPost("{gameId}/buy")]
+        public async Task<IActionResult> Buy(Guid gameId, [FromQuery] Guid userId)
         {
-            var updated = await _service.UpdateAsync(id, dto);
-            return updated == null ? NotFound() : Ok(updated);
+            var game = await _repository.GetByIdAsync(gameId);
+            if (game == null)
+                return NotFound("Jogo não encontrado.");
+
+            var purchase = new Purchase
+            {
+                GameId = gameId,
+                UserId = userId
+            };
+
+            _context.Purchases.Add(purchase);
+            await _context.SaveChangesAsync();
+
+            return Ok(purchase);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id) =>
-            await _service.DeleteAsync(id) ? NoContent() : NotFound();
+        // GET api/games/recommend?category=RPG
+        [HttpGet("recommend")]
+        public IActionResult Recommend([FromQuery] string category)
+        {
+            var recommended = _context.Games
+                .Where(g => g.Categoria == category)
+                .Take(3)
+                .ToList();
+
+            return Ok(recommended);
+        }
     }
 }

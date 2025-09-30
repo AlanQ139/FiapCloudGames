@@ -12,8 +12,5 @@ namespace GameService.Models
         public string Categoria { get; set; }
         public decimal Preco { get; set; }
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
-
-        // Propriedade de navegação para o relacionamento N:N com User
-        public List<UserGame> Usuarios { get; set; } = new List<UserGame>();
     }
 }
