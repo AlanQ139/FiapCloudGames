@@ -19,7 +19,7 @@ namespace FiapCloudGames.Services
                     Categoria = g.Categoria,
                     Descricao = g.Descricao,
                     Preco = g.Preco,
-                    DataDeCadastro = g.DataCadastro
+                    DataDeCadastro = g.DataDeCadastro
                 });
 
         public async Task<GameResponseDto?> GetByIdAsync(Guid id)
@@ -32,7 +32,7 @@ namespace FiapCloudGames.Services
                 Categoria = game.Categoria,
                 Descricao = game.Descricao,
                 Preco = game.Preco,
-                DataDeCadastro = game.DataCadastro
+                DataDeCadastro = game.DataDeCadastro
             };
         }
 
@@ -55,7 +55,7 @@ namespace FiapCloudGames.Services
                 Categoria = game.Categoria,
                 Descricao = game.Descricao,
                 Preco = game.Preco,
-                DataDeCadastro = game.DataCadastro
+                DataDeCadastro = game.DataDeCadastro
             };
         }
 
@@ -68,7 +68,7 @@ namespace FiapCloudGames.Services
             game.Categoria = dto.Categoria;
             game.Descricao = dto.Descricao;
             game.Preco = dto.Preco;
-            game.DataCadastro = DateTime.UtcNow;
+            game.DataDeCadastro = DateTime.UtcNow;
 
             await _repo.UpdateAsync(game);
 
@@ -79,7 +79,7 @@ namespace FiapCloudGames.Services
                 Categoria = game.Categoria,
                 Descricao = game.Descricao,
                 Preco = game.Preco,
-                DataDeCadastro = game.DataCadastro
+                DataDeCadastro = game.DataDeCadastro
             };
         }
 

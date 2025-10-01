@@ -7,9 +7,9 @@ namespace GameService.Repositories
 {
     public class GameRepository : IGameRepositories
     {
-        private readonly GameDbContext _context;
+        private readonly AppDbContext _context;
 
-        public GameRepository(GameDbContext context) => _context = context;
+        public GameRepository(AppDbContext context) => _context = context;
                 
         public async Task<IEnumerable<Game>> GetAllAsync() =>
             await _context.Games.ToListAsync();
@@ -25,7 +25,7 @@ namespace GameService.Repositories
 
         public async Task UpdateAsync(Game game)
         {
-            _context.Games.Update(game);
+            _context.Entry(game).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
 
@@ -33,6 +33,11 @@ namespace GameService.Repositories
         {
             _context.Games.Remove(game);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Guid id)
+        {
+            return await _context.Games.AnyAsync(g => g.Id == id);
         }
     }
 }

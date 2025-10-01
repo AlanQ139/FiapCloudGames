@@ -11,9 +11,9 @@ namespace GameService.Controllers
     public class GamesController : ControllerBase
     {
         private readonly IGameRepositories _repository;
-        private readonly GameDbContext _context;
+        private readonly AppDbContext _context;
 
-        public GamesController(IGameRepositories repository, GameDbContext context)
+        public GamesController(IGameRepositories repository, AppDbContext context)
         {
             _repository = repository;
             _context = context;

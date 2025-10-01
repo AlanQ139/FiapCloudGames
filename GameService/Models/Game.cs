@@ -1,4 +1,5 @@
 ﻿// FiapCloudGames.Api/Models/Game.cs
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 
@@ -10,7 +11,9 @@ namespace GameService.Models
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public string Categoria { get; set; }
+
+        [Precision(18, 2)]
         public decimal Preco { get; set; }
-        public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        public DateTime DataDeCadastro { get; set; } = DateTime.UtcNow;
     }
 }

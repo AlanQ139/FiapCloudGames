@@ -5,9 +5,9 @@ using System.Reflection.Emit;
 
 namespace GameService.Data
 {
-    public class GameDbContext : DbContext
+    public class AppDbContext : DbContext
     {
-        public GameDbContext(DbContextOptions<GameDbContext> options) : base(options) { }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         public DbSet<Game> Games { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
