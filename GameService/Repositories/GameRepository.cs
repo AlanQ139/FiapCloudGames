@@ -19,6 +19,11 @@ namespace GameService.Repositories
 
         public async Task AddAsync(Game game)
         {
+            //_context.Games.Add(game);
+            //await _context.SaveChangesAsync();
+            if (await _context.Games.AnyAsync(g => g.Id == game.Id))
+                throw new Exception("Já existe um jogo com esse ID.");
+
             _context.Games.Add(game);
             await _context.SaveChangesAsync();
         }

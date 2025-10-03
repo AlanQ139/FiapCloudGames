@@ -7,7 +7,7 @@ namespace GameService.Models
 {    
     public class Game
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public string Nome { get; set; }
         public string Descricao { get; set; }
         public string Categoria { get; set; }
