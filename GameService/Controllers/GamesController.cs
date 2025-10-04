@@ -2,6 +2,8 @@
 using GameService.DTOs;
 using GameService.Interfaces;
 using GameService.Models;
+using GameService.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameService.Controllers
@@ -12,11 +14,13 @@ namespace GameService.Controllers
     {
         private readonly IGameRepositories _repository;
         private readonly AppDbContext _context;
+        private readonly UserClient _userClient;
 
-        public GamesController(IGameRepositories repository, AppDbContext context)
+        public GamesController(IGameRepositories repository, AppDbContext context, UserClient userClient)
         {
             _repository = repository;
             _context = context;
+            _userClient = userClient;
         }
 
         // GET api/games
@@ -66,5 +70,26 @@ namespace GameService.Controllers
 
             return Ok(recommended);
         }
+
+        // POST api/games/create
+        [Authorize]
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest request)
+        {
+            // Valida usuário antes de criar o jogo
+            var user = await _userClient.GetUserByIdAsync(request.UserId);
+
+            if (user == null)
+                return BadRequest("Usuário não encontrado");
+
+            // Aqui faria o insert do jogo normalmente
+            return Ok($"Jogo cadastrado para o usuário {user.Nome}");
+        }
+    }
+
+    public class CreateGameRequest
+    {
+        public Guid UserId { get; set; }
+        public string GameName { get; set; } = string.Empty;
     }
 }
