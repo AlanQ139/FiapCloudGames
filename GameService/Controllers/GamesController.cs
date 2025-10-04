@@ -83,7 +83,7 @@ namespace GameService.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest request)
         {
-            // 1️⃣ Extrai o ID do usuário autenticado do token
+            // 1️ Extrai o ID do usuário autenticado do token
             //var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
             ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -92,12 +92,12 @@ namespace GameService.Controllers
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized("Token inválido: sem ID de usuário.");
 
-            // 2️⃣ Valida se o usuário existe no UserService
+            // 2️ Valida se o usuário existe no UserService
             var user = await _userClient.GetUserByIdAsync(Guid.Parse(userId));
             if (user == null)
                 return BadRequest("Usuário não encontrado no UserService.");
 
-            // 3️⃣ Cria o jogo normalmente
+            // 3️ Cria o jogo normalmente
             var game = new Game
             {
                 Nome = request.GameName,
@@ -114,6 +114,16 @@ namespace GameService.Controllers
                 Message = $"Jogo '{request.GameName}' cadastrado com sucesso para o usuário {user.Nome}.",
                 UserId = userId
             });
+        }
+
+        //GET /api/Games/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var game = await _repository.GetByIdAsync(id);
+            if (game == null)
+                return NotFound("Jogo inválido ou não encontrado");
+            return Ok(game);
         }
     }
 
