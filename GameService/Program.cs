@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using GameService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,17 +86,41 @@ builder.Services.AddHttpClient<UserClient>(c =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    int retries = 0;
+    const int maxRetries = 10;
+
+    while (true)
+    {
+        try
+        {
+            db.Database.Migrate();
+            break;
+        }
+        catch (Exception ex)
+        {
+            retries++;
+            if (retries >= maxRetries)
+                throw;
+            Console.WriteLine($"Banco ainda não pronto... tentando novamente ({retries}/{maxRetries})");
+            Thread.Sleep(3000);
+        }
+    }
+}
+
 app.UseCors();
 
 app.UseSwagger();
 app.UseSwaggerUI();
 
+#region Middleware customizado
+app.UseMiddleware<ErrorHandlingMiddleware>();
+#endregion
 // Ordem correta de middlewares
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
