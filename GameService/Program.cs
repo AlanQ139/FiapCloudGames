@@ -73,6 +73,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddAuthorization();
+builder.Services.AddSingleton<ElasticSearchService>();
 
 // HttpClient + handler para propagar token
 builder.Services.AddHttpContextAccessor();

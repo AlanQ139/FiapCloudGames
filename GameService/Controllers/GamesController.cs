@@ -22,12 +22,14 @@ namespace GameService.Controllers
         private readonly IGameRepositories _repository;
         private readonly AppDbContext _context;
         private readonly UserClient _userClient;
+        private readonly ElasticSearchService _elastic;
 
-        public GamesController(IGameRepositories repository, AppDbContext context, UserClient userClient)
+        public GamesController(IGameRepositories repository, AppDbContext context, UserClient userClient, ElasticSearchService elastic)
         {
             _repository = repository;
             _context = context;
             _userClient = userClient;
+            _elastic = elastic;
         }
 
         // GET api/games
@@ -68,13 +70,9 @@ namespace GameService.Controllers
 
         // GET api/games/recommend?category=RPG
         [HttpGet("recommend")]
-        public IActionResult Recommend([FromQuery] string category)
+        public async Task<IActionResult> Recommend([FromQuery] string category)
         {
-            var recommended = _context.Games
-                .Where(g => g.Categoria == category)
-                .Take(3)
-                .ToList();
-
+            var recommended = await _elastic.SearchGamesAsync(category);
             return Ok(recommended);
         }
 
@@ -84,7 +82,6 @@ namespace GameService.Controllers
         public async Task<IActionResult> CreateGame([FromBody] CreateGameRequest request)
         {
             // 1️ Extrai o ID do usuário autenticado do token
-            //var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
             var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub)
             ?? User.FindFirstValue(ClaimTypes.NameIdentifier)
             ?? User.FindFirstValue("userId"); // fallback se o UserService usar esse nome
@@ -108,6 +105,8 @@ namespace GameService.Controllers
             };
 
             await _repository.AddAsync(game);
+            //para o elasticsearch
+            await _elastic.IndexGameAsync(game);
 
             return Ok(new
             {
