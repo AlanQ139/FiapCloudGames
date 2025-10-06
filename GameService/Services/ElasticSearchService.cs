@@ -10,10 +10,15 @@ namespace GameService.Services
 
         public ElasticSearchService(IConfiguration configuration)
         {
-            var settings = new ConnectionSettings(new Uri(configuration["ElasticSearch:Url"]))
-                .DefaultIndex(IndexName);
+            //var settings = new ConnectionSettings(new Uri(configuration["ElasticSearch:Url"]))
+            //    .DefaultIndex(IndexName);
+            var url = configuration["ElasticSearch:Url"];
+            var username = configuration["ElasticSearch:Username"];
+            var password = configuration["ElasticSearch:Password"];
 
-            _client = new ElasticClient(settings);
+            //_client = new ElasticClient(settings);
+            var settings = new ConnectionSettings(new Uri(url))
+                .DefaultIndex(IndexName);
 
             // Cria o índice se não existir
             if (!_client.Indices.Exists(IndexName).Exists)
