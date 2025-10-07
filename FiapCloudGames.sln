@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+VisualStudioVersion = 17.14.36518.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameService", "GameService\GameService.csproj", "{20F56964-6962-4A34-B473-8776184214DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServiceTests", "GameServiceTests\GameServiceTests.csproj", "{A50BED33-C357-4EBC-AF40-CDE69F54A0D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{20F56964-6962-4A34-B473-8776184214DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20F56964-6962-4A34-B473-8776184214DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20F56964-6962-4A34-B473-8776184214DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A50BED33-C357-4EBC-AF40-CDE69F54A0D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A50BED33-C357-4EBC-AF40-CDE69F54A0D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A50BED33-C357-4EBC-AF40-CDE69F54A0D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A50BED33-C357-4EBC-AF40-CDE69F54A0D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A50BED33-C357-4EBC-AF40-CDE69F54A0D0} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D918545A-827A-4BC9-89A2-5D098A635D78}
