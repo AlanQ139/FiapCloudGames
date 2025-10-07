@@ -17,11 +17,25 @@ namespace GameService.Services
             var password = configuration["ElasticSearch:Password"];
 
             //_client = new ElasticClient(settings);
-            var settings = new ConnectionSettings(new Uri(url))
-                .DefaultIndex(IndexName);
+            //var settings = new ConnectionSettings(new Uri(url))
+                //.DefaultIndex(IndexName);
 
             // Cria o índice se não existir
-            if (!_client.Indices.Exists(IndexName).Exists)
+            //if (!_client.Indices.Exists(IndexName).Exists)
+            //{
+            //    _client.Indices.Create(IndexName, c => c
+            //        .Map<Game>(m => m.AutoMap())
+            //    );
+            //}
+            var settings = new ConnectionSettings(new Uri(url))
+            .DefaultIndex(IndexName)
+            .BasicAuthentication(username, password); // importante para cloud
+
+            _client = new ElasticClient(settings);
+
+            // Cria o índice se não existir
+            var existsResponse = _client.Indices.Exists(IndexName);
+            if (!existsResponse.Exists)
             {
                 _client.Indices.Create(IndexName, c => c
                     .Map<Game>(m => m.AutoMap())
