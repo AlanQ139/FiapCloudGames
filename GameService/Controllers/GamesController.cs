@@ -124,6 +124,14 @@ namespace GameService.Controllers
                 return NotFound("Jogo inválido ou não encontrado");
             return Ok(game);
         }
+
+        [HttpGet("metrics")]
+        public async Task<IActionResult> GetGameMetrics()
+        {
+            var metrics = await _elastic.GetGameMetricsAsync();
+            return Ok(metrics);
+        }
+
     }
 
     public class CreateGameRequest
