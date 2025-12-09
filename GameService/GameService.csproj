@@ -8,6 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Elasticsearch.Net" Version="7.17.5" />
+    <PackageReference Include="MassTransit" Version="8.5.7" />
+    <PackageReference Include="MassTransit.AspNetCore" Version="7.3.1" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.5.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
@@ -21,6 +24,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\SharedMessages\SharedMessages.csproj" />
   </ItemGroup>
 
 </Project>
