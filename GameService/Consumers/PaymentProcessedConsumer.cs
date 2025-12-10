@@ -7,7 +7,6 @@ namespace GameService.Consumers;
 
 /// <summary>
 /// Consumer MassTransit para processar eventos de pagamento
-/// MUITO mais simples que BackgroundService + RabbitMQ.Client!
 /// </summary>
 public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
 {
@@ -35,7 +34,7 @@ public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
         var message = context.Message;
 
         _logger.LogInformation(
-            "💳 Pagamento recebido via MassTransit: Payment={PaymentId}, Purchase={PurchaseId}, Status={Status}",
+            "Pagamento recebido via MassTransit: Payment={PaymentId}, Purchase={PurchaseId}, Status={Status}",
             message.PaymentId, message.PurchaseId, message.Status);
 
         // Busca a compra relacionada
@@ -44,7 +43,7 @@ public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
 
         if (purchase == null)
         {
-            _logger.LogWarning("⚠️ Compra {PurchaseId} não encontrada", message.PurchaseId);
+            _logger.LogWarning("Compra {PurchaseId} não encontrada", message.PurchaseId);
 
             // MassTransit vai mover para _error queue automaticamente
             throw new InvalidOperationException($"Purchase {message.PurchaseId} not found");
@@ -53,9 +52,8 @@ public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
         // Atualiza status baseado no resultado do pagamento
         if (message.Status == PaymentStatus.Paid)
         {
-            _logger.LogInformation("✅ Compra {PurchaseId} confirmada!", message.PurchaseId);
-
-            // Aqui você pode adicionar lógica adicional:
+            _logger.LogInformation("Compra {PurchaseId} confirmada!", message.PurchaseId);
+                        
             // - Enviar email de confirmação
             // - Liberar download do jogo
             // - Atualizar estatísticas
@@ -67,8 +65,7 @@ public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
         else if (message.Status == PaymentStatus.Failed)
         {
             _logger.LogWarning(
-                "❌ Falha no pagamento da compra {PurchaseId}: {ErrorMessage}",
-                message.PurchaseId, message.ErrorMessage);
+                "Falhou no pagamento da compra {PurchaseId}: {ErrorMessage}", message.PurchaseId, message.ErrorMessage);
 
             // Remove a compra se o pagamento falhou
             _context.Purchases.Remove(purchase);
@@ -76,7 +73,7 @@ public class PaymentProcessedConsumer : IConsumer<IPaymentProcessed>
 
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("✅ Processamento concluído para Purchase={PurchaseId}", message.PurchaseId);
+        _logger.LogInformation("Processamento concluído para Purchase={PurchaseId}", message.PurchaseId);
 
         // MassTransit faz ACK automático se não lançar exceção
     }
@@ -100,7 +97,7 @@ public class ProcessPaymentConsumer : IConsumer<IProcessPayment>
     {
         var command = context.Message;
 
-        _logger.LogInformation("📨 Comando recebido: ProcessPayment para Purchase={PurchaseId}",
+        _logger.LogInformation("Comando recebido: ProcessPayment para Purchase={PurchaseId}",
             command.PurchaseId);
 
         // Processar comando...
