@@ -1,23 +1,23 @@
-# Etapa de build
+# build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copia o csproj e restaura as dependências
-COPY GameService/GameService.csproj GameService/
+COPY FiapCloudGames/GameService/GameService.csproj GameService/
+COPY SharedMessages/SharedMessages.csproj SharedMessages/
+
 RUN dotnet restore GameService/GameService.csproj
 
-# Copia o restante do código e publica
-COPY . .
+COPY FiapCloudGames/GameService/. GameService/
+COPY SharedMessages/. SharedMessages/
+
 RUN dotnet publish GameService/GameService.csproj -c Release -o /app/publish
 
-# Etapa de runtime
+# runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Expõe a porta padrão
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
 
-# Comando de inicialização direto da API
 ENTRYPOINT ["dotnet", "GameService.dll"]

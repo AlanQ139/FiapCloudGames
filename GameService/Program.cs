@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using GameService.Middleware;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,6 +53,28 @@ builder.Services.AddCors(options =>
         policy.AllowAnyOrigin()
               .AllowAnyHeader()
               .AllowAnyMethod();
+    });
+});
+
+// ============ RABBITMQ + MASSTRANSIT ============
+builder.Services.AddMassTransit(x =>
+{
+    // UserService publica eventos, não consome
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(builder.Configuration["RabbitMQ:Host"], "/", h =>
+        {
+            h.Username(builder.Configuration["RabbitMQ:Username"]!);
+            h.Password(builder.Configuration["RabbitMQ:Password"]!);
+        });
+
+        cfg.ConfigureEndpoints(context);
+
+        cfg.UseMessageRetry(r => r.Incremental(
+            retryLimit: 3,
+            initialInterval: TimeSpan.FromSeconds(1),
+            intervalIncrement: TimeSpan.FromSeconds(2)
+        ));
     });
 });
 

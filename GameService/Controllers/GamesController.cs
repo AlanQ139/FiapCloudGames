@@ -86,7 +86,7 @@ namespace GameService.Controllers
                 });
 
                 _logger.LogInformation(
-                    "🎮 Compra publicada: Purchase={PurchaseId}, User={UserId}, Game={GameId}",
+                    "Compra publicada: Purchase={PurchaseId}, User={UserId}, Game={GameId}",
                     purchase.Id, userId, gameId);
 
                 return Ok(purchase);
@@ -111,7 +111,7 @@ namespace GameService.Controllers
 
         // ============================================
         // POST api/games/create
-        // ✨ MUDANÇA: Mantém lógica, adiciona evento ao Elasticsearch
+        // adiciona evento ao Elasticsearch
 
         [Authorize]
         [HttpPost("create")]
