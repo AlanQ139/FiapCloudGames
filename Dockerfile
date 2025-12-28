@@ -2,14 +2,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
+# copia csproj e nuget.config
 COPY FiapCloudGames/GameService/GameService.csproj GameService/
-COPY SharedMessages/SharedMessages.csproj SharedMessages/
+COPY FiapCloudGames/nuget.config .
 
+# restore (baixa o SharedMessages do GitHub Packages)
 RUN dotnet restore GameService/GameService.csproj
 
+# copia o código
 COPY FiapCloudGames/GameService/. GameService/
-COPY SharedMessages/. SharedMessages/
 
+# publish
 RUN dotnet publish GameService/GameService.csproj -c Release -o /app/publish
 
 # runtime
