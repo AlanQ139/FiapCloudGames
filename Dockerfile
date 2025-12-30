@@ -2,25 +2,26 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# copia csproj e nuget.config
-COPY FiapCloudGames/GameService/GameService.csproj GameService/
-COPY FiapCloudGames/nuget.config .
+ARG GH_USERNAME
+ARG GH_TOKEN
 
-# restore (baixa o SharedMessages do GitHub Packages)
+RUN dotnet nuget add source https://nuget.pkg.github.com/${GH_USERNAME}/index.json \
+    --name github \
+    --username ${GH_USERNAME} \
+    --password ${GH_TOKEN} \
+    --store-password-in-clear-text
+
+COPY GameService/GameService.csproj GameService/
 RUN dotnet restore GameService/GameService.csproj
 
-# copia o código
-COPY FiapCloudGames/GameService/. GameService/
-
-# publish
+COPY GameService/. GameService/
 RUN dotnet publish GameService/GameService.csproj -c Release -o /app/publish
 
 # runtime
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://+:80
 EXPOSE 80
-
 ENTRYPOINT ["dotnet", "GameService.dll"]
